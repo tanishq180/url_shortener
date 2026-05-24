@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📊 Link Statistics | URL Shortener</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Stats Card */
+        .stats-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .stats-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            color: white;
+        }
+
+        .stats-header h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .short-code-badge {
+            background: rgba(255, 255, 255, 0.2);
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 50px;
+            font-family: monospace;
+            font-size: 1.1rem;
+            margin-top: 10px;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            transition: transform 0.2s;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* URL Section */
+        .url-section {
+            padding: 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .url-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            word-break: break-all;
+            font-family: monospace;
+            margin-bottom: 15px;
+        }
+
+        .url-box a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .url-box a:hover {
+            text-decoration: underline;
+        }
+
+        /* Action Buttons */
+        .actions {
+            padding: 30px;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            text-align: center;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+
+        /* Created Date */
+        .created-date {
+            padding: 0 30px 30px 30px;
+            color: #999;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        /* QR Code Section (Bonus) */
+        .qr-section {
+            padding: 30px;
+            text-align: center;
+            background: #f8f9fa;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .qr-placeholder {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            display: inline-block;
+            margin-top: 15px;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="stats-card">
+            <div class="stats-header">
+                <h1>
+                    📊 Link Statistics
+                </h1>
+                <p>Detailed analytics for your shortened URL</p>
+                <div class="short-code-badge">
+                    🔑 Short Code: {{ link.short_code }}
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-icon">🖱️</div>
+                    <div class="stat-value">{{ link.click_count }}</div>
+                    <div class="stat-label">Total Clicks</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-value">{{ link.created_at|date:"M d, Y" }}</div>
+                    <div class="stat-label">Created</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-icon">⏰</div>
+                    <div class="stat-value">{{ link.created_at|timesince }}</div>
+                    <div class="stat-label">Age</div>
+                </div>
+            </div>
+
+            <div class="url-section">
+                <div class="section-title">🔗 Original URL</div>
+                <div class="url-box">
+                    <a href="{{ link.original_url }}" target="_blank">{{ link.original_url }}</a>
+                </div>
+                
+                <div class="section-title">✨ Shortened URL</div>
+                <div class="url-box">
+                    <a href="/{{ link.short_code }}/" target="_blank">{{ request.build_absolute_uri }}/{{ link.short_code }}/</a>
+                </div>
+            </div>
+
+            <div class="actions">
+                <a href="/{{ link.short_code }}/" target="_blank" class="btn btn-primary">
+                    🔗 Visit Short Link
+                </a>
+                <a href="/" class="btn btn-secondary">
+                    ✨ Create New Link
+                </a>
+            </div>
+
+            <div class="created-date">
+                Created {{ link.created_at|date:"F j, Y, g:i a" }}
+            </div>
+
+            <!-- Bonus: QR Code Section -->
+            <div class="qr-section">
+                <div class="section-title">📱 Scan to Visit</div>
+                <div class="qr-placeholder">
+                    <div style="width: 150px; height: 150px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: white;">
+                        QR Code<br>(Coming Soon)
+                    </div>
+                </div>
+                <p style="margin-top: 10px; font-size: 0.85rem; color: #666;">Scan this QR code to instantly visit the link</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
